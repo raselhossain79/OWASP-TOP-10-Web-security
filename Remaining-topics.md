@@ -26,7 +26,8 @@ Requirements:
 - Cover injection via shell metacharacters (;, |, &&, ||, backticks, $()) across both 
   Linux and Windows targets
 - Real-world industry-standard framing throughout, not just lab theory
-- I practice on PortSwigger Web Security Academy — map relevant labs to each technique
+- I practice on PortSwigger Web Security Academy — map relevant labs to each technique, in the correct difficulty progression 
+  sequence as they appear on the Academy (not just grouped by theme)
 - Break into multiple separate files: overview/classification, blind techniques, 
   OOB techniques, a filter/WAF bypass file, a dedicated file covering "commix" 
   (the sqlmap-equivalent automation tool for command injection — full usage, flags, 
@@ -57,8 +58,8 @@ Requirements:
 - Explain how NoSQL injection differs fundamentally from SQLi (no SQL syntax involved, 
   JSON-based operator manipulation instead) clearly upfront
 - Real-world industry-standard framing throughout, not just lab theory
-- I practice on PortSwigger Web Security Academy — map relevant labs to each technique 
-  if they exist
+- I practice on PortSwigger Web Security Academy — map relevant labs to each technique, in the correct difficulty progression 
+  sequence as they appear on the Academy, if matching labs exist
 - Break into multiple separate files: overview/classification, exploitation techniques, 
   a filter bypass file, a dedicated file covering "NoSQLMap" (the sqlmap-equivalent 
   automation tool for NoSQL injection — full usage, flags, and limitations compared to 
@@ -85,7 +86,8 @@ Requirements:
   engine in use (Jinja2, Twig, FreeMarker, Velocity, Smarty, etc), and exploitation 
   paths from basic expression evaluation up to remote code execution per engine
 - Real-world industry-standard framing throughout, not just lab theory
-- I practice on PortSwigger Web Security Academy — map relevant labs to each technique
+- I practice on PortSwigger Web Security Academy — map relevant labs to each technique, in the correct difficulty progression 
+  sequence as they appear on the Academy (not just grouped by theme)
 - Break into multiple separate files: overview/detection, engine-by-engine exploitation 
   (at least Jinja2 and Twig in detail since they're most common), a 
   detection-to-RCE escalation file, a dedicated file covering "tplmap" (the 
@@ -114,7 +116,8 @@ Requirements:
   exfiltration via DNS/HTTP), XXE via SSRF, and error-based XXE (data leaked through 
   malformed XML error messages)
 - Real-world industry-standard framing throughout, not just lab theory
-- I practice on PortSwigger Web Security Academy — map relevant labs to each technique
+- I practice on PortSwigger Web Security Academy — map relevant labs to each technique, in the correct difficulty progression 
+  sequence as they appear on the Academy (not just grouped by theme)
 - Break into multiple separate files: overview/classification, classic/in-band XXE, 
   blind/OOB XXE, a file showing XXE-to-SSRF chaining, a dedicated file covering 
   "XXEinjector" (the closest automation tool equivalent for XXE — full usage, flags, 
@@ -141,8 +144,8 @@ Requirements:
 - Cover authentication bypass via LDAP filter manipulation, blind LDAP injection, 
   and data extraction via LDAP search filters
 - Real-world industry-standard framing throughout, not just lab theory
-- I practice on PortSwigger Web Security Academy — map relevant labs to each technique 
-  if they exist (note if this vuln class has limited lab coverage there)
+- I practice on PortSwigger Web Security Academy — map relevant labs to each technique, in the correct difficulty progression 
+  sequence as they appear on the Academy, if matching labs exist (note if this vuln class has limited lab coverage there)
 - Break into multiple separate files: overview/classification, exploitation techniques, 
   and a final cheatsheet file
 - Note: there is no widely-used sqlmap-equivalent automation tool for LDAP injection — 
@@ -170,7 +173,8 @@ Requirements:
 - Cover HTTP response splitting, header injection leading to cache poisoning, 
   session fixation via injected headers, and log injection
 - Real-world industry-standard framing throughout, not just lab theory
-- I practice on PortSwigger Web Security Academy — map relevant labs to each technique
+- I practice on PortSwigger Web Security Academy — map relevant labs to each technique, in the correct difficulty progression 
+  sequence as they appear on the Academy (not just grouped by theme)
 - Break into multiple separate files: overview/classification, exploitation techniques 
   (response splitting, cache poisoning chains), a section/file mentioning "crlfuzz" (a 
   basic CRLF-detection fuzzing tool — lighter than sqlmap-tier but worth knowing), and 
@@ -202,7 +206,8 @@ Requirements:
   (gadget chains, ysoserial), Python (pickle), and .NET, at a level appropriate for a 
   pentester (not just theory)
 - Real-world industry-standard framing throughout, not just lab theory
-- I practice on PortSwigger Web Security Academy — map relevant labs to each technique
+- I practice on PortSwigger Web Security Academy — map relevant labs to each technique, in the correct difficulty progression 
+  sequence as they appear on the Academy (not just grouped by theme)
 - Break into multiple separate files: overview/classification, language-by-language 
   exploitation (PHP, Java, Python, .NET as separate sections or files), a gadget chain 
   concept file, and a final cheatsheet + lab mapping file
@@ -233,7 +238,8 @@ Requirements:
   escalation, missing function-level access control, path traversal as an access 
   control issue, and forced browsing
 - Real-world industry-standard framing throughout, not just lab theory
-- I practice on PortSwigger Web Security Academy — map relevant labs to each technique
+- I practice on PortSwigger Web Security Academy — map relevant labs to each technique, in the correct difficulty progression 
+  sequence as they appear on the Academy (not just grouped by theme)
 - Break into multiple separate files: overview/classification, IDOR techniques, 
   privilege escalation techniques, a path traversal file, a section/file covering 
   "Autorize" and "AuthMatrix" (Burp extensions that automate access control testing by 
@@ -261,7 +267,8 @@ Requirements:
   generation/randomness, missing/weak TLS configuration, padding oracle attacks, 
   and JWT-specific cryptographic flaws (alg:none, weak secret brute-forcing)
 - Real-world industry-standard framing throughout, not just lab theory
-- I practice on PortSwigger Web Security Academy — map relevant labs to each technique
+- I practice on PortSwigger Web Security Academy — map relevant labs to each technique, in the correct difficulty progression 
+  sequence as they appear on the Academy (not just grouped by theme)
 - Break into multiple separate files: overview/classification, hashing/encryption 
   weaknesses (with a dedicated "hashcat" usage section — full flags breakdown, not just 
   commands), JWT attacks specifically (with a dedicated "jwt_tool" usage section), a 
@@ -291,7 +298,8 @@ Requirements:
 - Include real-world example scenarios (e.g. flawed password reset logic, race 
   conditions from design flaws, workflow bypass)
 - Real-world industry-standard framing throughout, not just lab theory
-- I practice on PortSwigger Web Security Academy — map relevant labs to each concept 
+- I practice on PortSwigger Web Security Academy — map relevant labs to each concept, 
+  in the correct difficulty progression sequence as they appear on the Academy 
   (business logic vulnerabilities labs are most relevant here)
 - Break into multiple separate files: overview/concept, business logic flaw categories, 
   a case-study file with real example scenarios, and a final checklist file for 
@@ -321,7 +329,8 @@ Requirements:
   messages/stack traces, missing security headers, directory listing exposure, 
   cloud storage misconfiguration (S3 buckets etc), and CORS misconfiguration
 - Real-world industry-standard framing throughout, not just lab theory
-- I practice on PortSwigger Web Security Academy — map relevant labs to each technique
+- I practice on PortSwigger Web Security Academy — map relevant labs to each technique, in the correct difficulty progression 
+  sequence as they appear on the Academy (not just grouped by theme)
 - Break into multiple separate files: overview/classification, a security headers file, 
   a CORS misconfiguration file, a cloud/infrastructure misconfiguration file (including 
   a section on "S3Scanner" for cloud storage misconfig), a section/file covering "Nikto" 
@@ -349,9 +358,9 @@ Requirements:
   using CVE databases effectively (NVD, Exploit-DB), supply chain risk basics, and 
   how to responsibly verify a suspected known-vulnerable component during an engagement
 - Real-world industry-standard framing throughout, not just lab theory
-- I practice on PortSwigger Web Security Academy — map relevant labs if any exist 
-  (note if this category has limited lab coverage there, since it's more 
-  recon/methodology-focused)
+- I practice on PortSwigger Web Security Academy — map relevant labs if any exist, in the correct difficulty progression sequence 
+  as they appear on the Academy (note if this category has limited lab coverage 
+  there, since it's more recon/methodology-focused)
 - Break into multiple separate files: overview/methodology, a fingerprinting techniques 
   file (whatweb, Wappalyzer — full flags breakdown), a dedicated file covering 
   "Retire.js" and "OWASP Dependency-Check" (the closest automation tool equivalents for 
@@ -379,7 +388,8 @@ Requirements:
   fixation, session token predictability/weak entropy, multi-factor authentication 
   bypass techniques, and password reset flow vulnerabilities
 - Real-world industry-standard framing throughout, not just lab theory
-- I practice on PortSwigger Web Security Academy — map relevant labs to each technique
+- I practice on PortSwigger Web Security Academy — map relevant labs to each technique, in the correct difficulty progression 
+  sequence as they appear on the Academy (not just grouped by theme)
 - Break into multiple separate files: overview/classification, brute force/credential 
   attacks (with a dedicated "Hydra" full usage section — same depth as the sqlmap file 
   in my SQLi series — plus Burp Intruder technique), session management flaws, an MFA 
@@ -408,8 +418,8 @@ Requirements:
   dependency confusion attacks, and client-side integrity issues (e.g. unverified 
   CDN-hosted scripts, missing Subresource Integrity)
 - Real-world industry-standard framing throughout, not just lab theory
-- I practice on PortSwigger Web Security Academy — map relevant labs if any exist 
-  (note if coverage is limited there)
+- I practice on PortSwigger Web Security Academy — map relevant labs if any exist, in the correct difficulty progression sequence 
+  as they appear on the Academy (note if coverage is limited there)
 - Break into multiple separate files: overview/classification, supply chain/dependency 
   attack techniques, a CI/CD risk file, and a final checklist file
 - Note: there is no single sqlmap-equivalent automation tool for this category — if 
@@ -438,8 +448,9 @@ Requirements:
   evidenced in a pentest report (since it's rarely "exploitable" directly, more of a 
   gap-identification category)
 - Real-world industry-standard framing throughout, not just lab theory
-- I practice on PortSwigger Web Security Academy — map relevant labs if any exist 
-  (note if coverage is minimal/none, since this category is hard to lab-test directly)
+- I practice on PortSwigger Web Security Academy — map relevant labs if any exist, in the correct difficulty progression sequence 
+  as they appear on the Academy (note if coverage is minimal/none, since this 
+  category is hard to lab-test directly)
 - Break into multiple separate files: overview/concept, a log injection techniques file, 
   and a final checklist file for identifying this gap during an engagement
 - Note: there is no automation/exploitation tool equivalent for this category since 
@@ -468,7 +479,8 @@ Requirements:
 - Cover SSRF filter bypass techniques specifically (since SSRF protections are commonly 
   filter-based)
 - Real-world industry-standard framing throughout, not just lab theory
-- I practice on PortSwigger Web Security Academy — map relevant labs to each technique
+- I practice on PortSwigger Web Security Academy — map relevant labs to each technique, in the correct difficulty progression 
+  sequence as they appear on the Academy (not just grouped by theme)
 - Break into multiple separate files: overview/classification, basic/blind SSRF, 
   a filter bypass techniques file, a cloud metadata exploitation file, a dedicated file 
   covering "SSRFmap" (the sqlmap-equivalent automation tool for SSRF — full usage, 
