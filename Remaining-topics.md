@@ -13,7 +13,7 @@ all prompts below now explicitly require it.
 
 ## GROUP 1 — Injection Family (6 topics)
 
-### [✅ ] 1. OS Command Injection
+### [✅] 1. OS Command Injection
 
 ```
 I'm building a comprehensive, GitHub-ready note series on OS Command Injection — part of 
@@ -44,7 +44,7 @@ Requirements:
 Please plan the file breakdown first, then build each file.
 ```
 
-### [ ] 2. NoSQL Injection
+### [✅] 2. NoSQL Injection
 
 ```
 I'm building a comprehensive, GitHub-ready note series on NoSQL Injection (primarily 
