@@ -13,7 +13,7 @@ all prompts below now explicitly require it.
 
 ## GROUP 1 — Injection Family (6 topics)
 
-### [ ] 1. OS Command Injection
+### [✅ ] 1. OS Command Injection
 
 ```
 I'm building a comprehensive, GitHub-ready note series on OS Command Injection — part of 
