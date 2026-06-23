@@ -33,9 +33,9 @@ Each topic directory follows the same internal structure for consistency:
 
 ```
 .
-├── README.md                          ← you are here (repo-wide index)
-├── SQLi_Notes/                        ← SQL Injection (complete)
-├── XSS_Notes/                         ← Cross-Site Scripting (complete, if added as its own folder)
+├── README.md                          
+├── SQLi_Notes/                        
+├── XSS_Notes/                         
 ├── Command_Injection_Notes/
 ├── NoSQL_Injection_Notes/
 ├── SSTI_Notes/
