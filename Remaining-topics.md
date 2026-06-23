@@ -74,7 +74,7 @@ Requirements:
 Please plan the file breakdown first, then build each file.
 ```
 
-### [ ] 3. Server-Side Template Injection (SSTI)
+### [✅] 3. Server-Side Template Injection (SSTI)
 
 ```
 I'm building a comprehensive, GitHub-ready note series on Server-Side Template Injection 
