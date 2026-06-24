@@ -103,7 +103,7 @@ Requirements:
 Please plan the file breakdown first, then build each file.
 ```
 
-### [ ] 4. XML External Entity (XXE) Injection
+### [✅] 4. XML External Entity (XXE) Injection
 
 ```
 I'm building a comprehensive, GitHub-ready note series on XML External Entity (XXE) 
