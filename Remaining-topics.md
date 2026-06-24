@@ -133,7 +133,7 @@ Requirements:
 Please plan the file breakdown first, then build each file.
 ```
 
-### [ ] 5. LDAP Injection
+### [✅] 5. LDAP Injection
 
 ```
 I'm building a comprehensive, GitHub-ready note series on LDAP Injection — part of the 
