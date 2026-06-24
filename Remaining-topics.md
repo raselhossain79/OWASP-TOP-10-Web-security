@@ -508,3 +508,57 @@ Please plan the file breakdown first, then build each file.
 
 No need to remember anything or write prompts from scratch — every prompt already
 includes the command-breakdown requirement so this won't be missed again.
+
+
+```
+I'm building a final, capstone note series called "Real-World Exploitation & Vulnerability 
+Chaining" — meant to be read AFTER completing individual vulnerability-type note series 
+(SQLi, XSS, SSRF, IDOR, SSTI, etc). This is not about any single vulnerability type — it's 
+about the methodology and skills that bridge "I can solve a known PortSwigger lab pattern" 
+to "I can adapt to messy, unpredictable real-world targets and bug bounty programs."
+
+Requirements:
+- Cover vulnerability CHAINING specifically — combining multiple individually-low-impact 
+  bugs into one critical finding. Include real documented chain patterns such as:
+  - IDOR + Broken Access Control → full account takeover
+  - SSRF + Cloud Metadata + exposed credentials → cloud account compromise
+  - Stored XSS + CSRF token theft → full account takeover
+  - SQLi + file write → RCE
+  - SSTI → RCE
+  - Open redirect + OAuth misconfig → account takeover
+  - Subdomain takeover + cookie scoping → session hijacking
+- Cover how to THINK about chaining: mapping an app's full attack surface first, 
+  tracking "low severity" findings instead of discarding them, and looking for where 
+  one bug's output becomes another bug's input
+- Cover adapting known techniques to unknown/custom situations: how to approach a target 
+  with no known CVE or lab-matching pattern, systematic fuzzing methodology, and how to 
+  read application behavior to infer what's happening server-side without source code
+- Cover a practical end-to-end methodology for live targets: recon → attack surface 
+  mapping → low-hanging fruit testing → chaining/escalation → impact documentation, 
+  written as something usable on both bug bounty targets and authorized pentest 
+  engagements
+- Cover common WAF/defense adaptation in real environments (since real-world WAFs behave 
+  differently from lab environments — what's actually different and how to test for it)
+- Cover report-writing for chained findings specifically (how to document a multi-step 
+  chain clearly for a client/program so impact isn't underestimated)
+- Real-world industry-standard framing throughout — this file series should read like 
+  something written by an experienced bug bounty hunter/pentester, not a lab walkthrough
+- Break into multiple separate files:
+  1. Overview — what chaining is, why low-severity bugs matter, mindset shift from 
+     lab-solving to real-world hunting
+  2. Documented real-world chain patterns (the list above, each broken down step by step)
+  3. Attack surface mapping methodology for an unfamiliar target
+  4. Adapting known techniques to unknown/custom scenarios (fuzzing methodology, 
+     behavioral inference without source code)
+  5. Real-world WAF/defense behavior and adaptation (how it differs from lab conditions)
+  6. End-to-end methodology checklist (recon → mapping → testing → chaining → reporting)
+  7. Report-writing guide specifically for chained/multi-step findings
+  8. A README.md indexing all files
+- Write everything in full English only — no Bangla/Banglish anywhere
+- CRITICAL: every example/payload/request sequence shown must be broken down step by 
+  step — explain exactly what's happening at each stage of a chain and why it works. 
+  Never give a chain example as just "this leads to that" without explaining the 
+  mechanism connecting each step.
+
+Please plan the file breakdown first, then build each file.
+```
