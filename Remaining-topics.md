@@ -161,7 +161,7 @@ Requirements:
 Please plan the file breakdown first, then build each file.
 ```
 
-### [ ] 6. CRLF / HTTP Header Injection
+### [✅] 6. CRLF / HTTP Header Injection
 
 ```
 I'm building a comprehensive, GitHub-ready note series on CRLF Injection / HTTP Header 
