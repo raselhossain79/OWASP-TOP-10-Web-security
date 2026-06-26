@@ -193,7 +193,7 @@ Please plan the file breakdown first, then build each file.
 
 ## GROUP 2 — Deserialization (1 topic)
 
-### [ ] 7. Insecure Deserialization
+### [✅] 7. Insecure Deserialization
 
 ```
 I'm building a comprehensive, GitHub-ready note series on Insecure Deserialization — 
@@ -226,7 +226,7 @@ Please plan the file breakdown first, then build each file.
 
 ## GROUP 3 — Other OWASP Top 10 Categories (9 topics)
 
-### [ ] 8. Broken Access Control (A01:2021)
+### [✅] 8. Broken Access Control (A01:2021)
 
 ```
 I'm building a comprehensive, GitHub-ready note series on Broken Access Control — 
