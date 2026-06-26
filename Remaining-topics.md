@@ -284,7 +284,7 @@ Requirements:
 Please plan the file breakdown first, then build each file.
 ```
 
-### [ ] 10. Insecure Design (A04:2021)
+### [✅] 10. Insecure Design (A04:2021)
 
 ```
 I'm building a comprehensive, GitHub-ready note series on Insecure Design — 
