@@ -255,7 +255,7 @@ Requirements:
 Please plan the file breakdown first, then build each file.
 ```
 
-### [ ] 9. Cryptographic Failures (A02:2021)
+### [✅] 9. Cryptographic Failures (A02:2021)
 
 ```
 I'm building a comprehensive, GitHub-ready note series on Cryptographic Failures — 
