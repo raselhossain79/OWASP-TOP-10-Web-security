@@ -107,8 +107,8 @@ come before rare, advanced ones.
 
 ```
 .
-├── README.md                                  ← you are here (repo-wide index)
-├── Web_Fundamentals_Notes/                    ← START HERE — prerequisite, read first
+├── README.md                                  
+├── Web_Fundamentals_Notes/                    
 ├── SQLi_Notes/
 ├── XSS_Notes/
 ├── SSTI_Notes/
@@ -142,39 +142,13 @@ come before rare, advanced ones.
 ├── Integrity_Failures_Notes/
 ├── Logging_Monitoring_Failures_Notes/
 ├── Subdomain_Takeover_Recon_Notes/
-├── API_Security_Notes/                        ← planned separately, not yet scoped
-└── Real_World_Chaining_Notes/                  ← capstone, build LAST
+├── Real_World_Chaining_Notes/                       
+└── API_Security_Notes/                 
 ```
-
-> Folder names above are suggested — use whatever naming convention you actually create
-> each directory with; just keep the sequence table above updated to match.
-
----
-
-## Prompt Reference Files
-
-Three reference files contain ready-to-paste prompts for building each remaining topic
-in a new chat — keep these saved alongside the repo (not necessarily committed to it):
-
-| File | Covers |
-|---|---|
-| `Remaining_Topics_Prompts.md` | The 17 OWASP-Top-10-aligned topics (#6–#18 above, plus CSRF and Deserialization) |
-| `Additional_WebApp_Pentest_Topics_Prompts.md` | The 14 additional topics found via WSTG cross-check (#19–#33 above) |
-| `Updated_Capstone_Prompt.md` | Topic #34 — build LAST, after everything else is done |
-
-`Web_Fundamentals_Notes/` (topic #0) was already built directly as notes rather than a
-prompt — it's the only topic in this repo built this way.
 
 ---
 
 ## How To Use This Repo
-
-**If you're me, continuing this later:**
-1. Check the sequence table above for what's next in order (not just what's unchecked
-   — the order matters more than the OWASP-numbering used in the prompt files).
-2. Each unbuilt topic has a ready-to-paste prompt in one of the three prompt files
-   above — copy it into a new chat to build that folder.
-3. Once a topic folder is complete, update its status here and commit.
 
 **If you're reviewing for study/revision:**
 1. Start with `Web_Fundamentals_Notes/` if it's been a while — even a quick skim
@@ -193,7 +167,6 @@ throughout — every file explains the "why," not just the "what."
 
 ## Conventions Used Throughout This Repo
 
-- All notes are written in English only.
 - Every command or payload is broken down piece by piece (flags, parameters, syntax
   explained) — nothing is presented as a "just run this" black box.
 - Scope for this repo was cross-checked against the OWASP Web Security Testing Guide
