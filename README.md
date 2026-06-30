@@ -48,11 +48,11 @@ come before rare, advanced ones.
 | # | Topic | Folder | Status | Focus | Why |
 |---|---|---|---|---|---|
 | 0 | **Web Fundamentals (prerequisite)** | `Web_Fundamentals_Notes/` | ✅ Complete | 🔴 High | Non-negotiable — every other topic assumes this is already understood |
-| 1 | SQL Injection | `SQLi_Notes/` | ✅ Complete | 🔴 High | Most-documented injection class, builds core "find→confirm→exploit" methodology used everywhere else |
-| 2 | Cross-Site Scripting | `XSS_Notes/` | ✅ Complete | 🔴 High | Extremely common in real targets; foundation for several later chains (CSRF token theft, session hijacking) |
-| 3 | Server-Side Template Injection | `SSTI_Notes/` | ✅ Complete | 🟡 Medium | Direct RCE potential, but rarer to find than SQLi/XSS |
-| 4 | XML External Entity Injection | `XXE_Notes/` | ✅ Complete | 🟡 Medium | High impact when found, but increasingly rare due to modern library hardening |
-| 5 | LDAP Injection | `LDAP_Injection_Notes/` | ✅ Complete | ⚪ Low | Rare in bug bounty; mainly relevant for internal/enterprise app engagements |
+| 1 | SQL Injection | `SQLi_Notes/` | ⬜ Planned | 🔴 High | Most-documented injection class, builds core "find→confirm→exploit" methodology used everywhere else |
+| 2 | Cross-Site Scripting | `XSS_Notes/` | ⬜ Planned | 🔴 High | Extremely common in real targets; foundation for several later chains (CSRF token theft, session hijacking) |
+| 3 | Server-Side Template Injection | `SSTI_Notes/` | ⬜ Planned | 🟡 Medium | Direct RCE potential, but rarer to find than SQLi/XSS |
+| 4 | XML External Entity Injection | `XXE_Notes/` | ⬜ Planned | 🟡 Medium | High impact when found, but increasingly rare due to modern library hardening |
+| 5 | LDAP Injection | `LDAP_Injection_Notes/` | ⬜ Planned | ⚪ Low | Rare in bug bounty; mainly relevant for internal/enterprise app engagements |
 | 6 | OS Command Injection | `Command_Injection_Notes/` | ⬜ Planned | 🔴 High | Direct RCE, common in apps that shell out to system commands |
 | 7 | NoSQL Injection | `NoSQL_Injection_Notes/` | ⬜ Planned | 🟡 Medium | Important specifically when the stack is MongoDB/Node.js-based |
 | 8 | XPath Injection | `XPath_Injection_Notes/` | ⬜ Planned | ⚪ Low | Niche — only relevant against XML-backed query systems |
