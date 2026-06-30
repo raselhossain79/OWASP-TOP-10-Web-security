@@ -142,7 +142,7 @@ come before rare, advanced ones.
 ├── Integrity_Failures_Notes/
 ├── Logging_Monitoring_Failures_Notes/
 ├── Subdomain_Takeover_Recon_Notes/
-├── Real_World_Chaining_Notes/
+└── Real_World_Chaining_Notes/
                
 ```
 
