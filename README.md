@@ -107,7 +107,8 @@ come before rare, advanced ones.
 
 ```
 .
-├── README.md                                  
+├── README.md
+├── Practice_Methodology_Notes                                 
 ├── Web_Fundamentals_Notes/                    
 ├── SQLi_Notes/
 ├── XSS_Notes/
@@ -193,3 +194,9 @@ These notes are for authorized security testing and educational purposes only �
 only against systems you own or have explicit written permission to test (PortSwigger
 Web Security Academy labs, your own lab environments, or authorized client engagements
 within defined scope).
+
+---
+## License
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+
