@@ -59,7 +59,7 @@ in Burp Proxy's HTTP history while you visit five different sites makes it perma
   minimum relevant to web traffic
 - Full HTML/CSS/JavaScript language tutorials — only enough JS/DOM concept to 
   understand client-side vulnerabilities later (file 06 covers exactly this much, no more)
-- Linux fundamentals, Python/Bash scripting — assumed already covered in your earlier 
+- Linux fundamentals, Python/Bash scripting — assumed already covered earlier 
   foundational notes (Linux privesc, Bash/Python reference guides)
 
 This folder is scoped tightly to "what do I need to understand HTTP and the browser 
