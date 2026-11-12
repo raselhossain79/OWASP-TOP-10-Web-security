@@ -44,7 +44,3 @@ reused throughout files 04–08).
 Every file includes a **Real-World Notes** section addressing how the technique shows up in
 actual assessments, common mistakes during testing, and report-writing considerations —
 written for direct application on client engagements, not just lab exercises.
-
-## Language
-
-All content is written in full English only.
