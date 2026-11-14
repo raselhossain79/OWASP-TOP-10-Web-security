@@ -42,7 +42,7 @@ During testing of the `category` filter functionality on the target web applicat
    This returned the full set of usernames and passwords concatenated as `username:password` pairs, confirming successful data extraction and solving the lab.
 
 ## 5. Proof of Concept (Payload and Result)
-*Not included in this writeup (omitted intentionally to save time/resources).*
+*Not included in this writeup.*
 
 ## 6. Impact
 Exploitation of this vulnerability allows an unauthenticated attacker to:
