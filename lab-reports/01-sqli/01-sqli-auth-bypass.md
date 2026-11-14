@@ -30,7 +30,7 @@ The login functionality of the target application was found to be vulnerable to 
 5. Submitted the form again. This payload also resulted in the application logging the session in as **administrator**, confirming that the `OR 1=1` condition caused the query to match the first user record (or otherwise satisfy the login check) regardless of the username supplied.
 
 ## 5. Proof of Concept (Payload and Result)
-*Not included in this writeup (omitted intentionally to save time/resources).*
+*Not included in this writeup.
 
 **Payloads used (username field, password field = arbitrary value):**
 - `administrator' AND 1=1 -- ` → Result: Logged in as administrator
