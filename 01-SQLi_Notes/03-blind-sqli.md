@@ -198,32 +198,78 @@ Extracting data via time-based (same `SUBSTRING` logic as Boolean-Based Blind SQ
 
 Breakdown: Identical structure to the Boolean-Based character extraction in section 2.3, with the comparison result fed into `IF(...)` so a correct guess triggers a 5-second delay instead of a content change.
 
-### 4.3 MSSQL
 
-```sql
-'; IF (1=1) WAITFOR DELAY '0:0:5'--
-```
+### 4.3 PostgreSQL
 
-Breakdown:
-- `;` — terminates the original SQL statement and attempts to start a second statement. MSSQL supports stacked queries, but whether they are exploitable depends on the application's query execution method and database driver configuration.
-- `IF (1=1)` — MSSQL's conditional control-flow statement.
-- `WAITFOR DELAY '0:0:5'` — pauses execution for 5 seconds. The time format is `'HH:MM:SS'`.
-- If the condition is true, the delay executes; if false, the delay is skipped.
+PostgreSQL uses `pg_sleep(seconds)` as its native time-delay function. Unlike MySQL's `IF()`, PostgreSQL commonly uses `CASE WHEN` for conditional logic.
 
-**Important:** Do not assume stacked queries are always supported. The injection context and application/database driver behavior determine whether this technique works.
-
-### 4.4 PostgreSQL
+**A. Stacked Query Context**
 
 ```sql
 '; SELECT CASE WHEN (1=1) THEN pg_sleep(5) ELSE pg_sleep(0) END--
 ```
 
 Breakdown:
-- `pg_sleep(seconds)` — PostgreSQL's native delay function, equivalent to MySQL's `SLEEP()`.
+- `;` — terminates the original statement and attempts to execute a second SQL statement.
 - `CASE WHEN` — evaluates the condition and selects the appropriate branch.
 - `pg_sleep(5)` — introduces a 5-second delay when the condition is true.
 - `pg_sleep(0)` — introduces no intentional delay when the condition is false.
-- The `;` attempts to execute a second SQL statement, so stacked-query support is required for this particular injection structure.
+- This particular structure requires stacked-query support.
+
+**B. String Concatenation Context**
+
+Example from PortSwigger's TrackingId-style injection context:
+
+```sql
+'||pg_sleep(5)--
+```
+
+Breakdown:
+- `||` — PostgreSQL's string concatenation operator. It joins expressions within the existing SQL statement.
+- `pg_sleep(5)` — introduces a 5-second delay.
+- Unlike the previous example, this does not attempt to start a second SQL statement.
+- This approach can work when the injection point is inside a string expression and stacked queries are unavailable, provided the surrounding SQL context accepts the expression.
+
+**Important:** `;` and `||` serve different purposes. `;` separates SQL statements, while `||` concatenates expressions. Neither is universally correct; the original query structure determines which approach is appropriate.
+
+### 4.4 Microsoft SQL Server (MSSQL)
+
+**Basic Conditional Time Delay (Stacked Query)**
+
+```sql
+'; IF (1=1) WAITFOR DELAY '0:0:5'--
+```
+
+**Breakdown:**
+- `;` — terminates the existing SQL statement and starts another statement.
+- `IF (1=1)` — executes the delay only when the condition is true.
+- `WAITFOR DELAY '0:0:5'` — pauses execution for 5 seconds.
+- `--` — comments out the remaining SQL query.
+
+**Stacked Queries Support:**
+- MSSQL supports stacked queries using semicolons (`;`) to separate SQL statements.
+- However, whether stacked queries work in an injection point depends on the application's database driver/API and query execution method.
+- Therefore, MSSQL support does not guarantee that every injection point allows stacked queries.
+
+**When Stacked Queries Are Not Available**
+
+If the application does not allow multiple statements, use a time-delay expression within the existing SQL statement instead of relying on `;`.
+
+For example, in a suitable string-concatenation context:
+
+```sql
+' IF (1=1) WAITFOR DELAY '0:0:5'--
+```
+
+**Important:** `WAITFOR DELAY` is a control-flow statement, not a normal scalar function. It cannot simply be inserted into every `SELECT` expression. Unlike PostgreSQL's `pg_sleep()`, MSSQL does not provide an equivalent general-purpose sleep function that can be embedded in a scalar expression.
+
+If stacked queries are blocked, the exact alternative depends on the SQL injection context and query structure. Do not assume the example above will work without verifying the context.
+
+**Key Takeaways:**
+- MSSQL time-delay mechanism: `WAITFOR DELAY`
+- Stacked query separator: `;`
+- Stacked queries are supported by MSSQL, but may be restricted by the application or driver.
+- If stacked queries are unavailable, identify an alternative compatible with the existing SQL statement context.
 
 ### 4.5 Oracle
 
@@ -236,15 +282,18 @@ Oracle supports several delay primitives. One alternative is `DBMS_PIPE.RECEIVE_
 Breakdown:
 - `CASE WHEN (1=1)` — evaluates the condition and selects the appropriate branch.
 - `DBMS_PIPE.RECEIVE_MESSAGE('a',5)` — waits for a message on pipe `'a'` for up to 5 seconds.
+- `'a'` — the name of the pipe from which the function attempts to receive a message. It is an arbitrary pipe name, not a special keyword.
 - `5` — maximum waiting time in seconds.
 - `ELSE 0` — returns immediately without an intentional delay when the condition is false.
-- `1=` — compares the returned status code with `1`. A timeout typically returns `1`, making the condition true and allowing the SQL expression to evaluate successfully.
+- `1=` — compares the returned status code with `1`. A timeout typically returns `1`, making the comparison true.
 
 **Expected behavior:**
-- True condition → approximately 5 seconds delay.
+- True condition → approximately 5 seconds delay, assuming no message arrives.
 - False condition → no intentional delay.
 
 **Important:** The `DBMS_PIPE` package must be accessible to the database user. The pipe must also have no incoming message during the test. Package privileges and the surrounding SQL injection context can affect whether this payload works.
+
+Also remember that `DBMS_LOCK.SLEEP()` is a procedure, not a value-returning SQL function, so it cannot be directly used as a `THEN` expression inside a SQL `CASE` statement.
 
 ### 4.6 PortSwigger Lab Mapping (Practitioner)
 
@@ -255,6 +304,7 @@ Breakdown:
 
 - **Common mistake:** Using a delay that's too short (e.g., `SLEEP(1)`) — easily lost in normal network jitter, producing false negatives. 5 seconds is a reasonable starting point; adjust according to baseline latency and response variability.
 - **Statistical validation:** Never confirm a time-based SQLi from a single delayed response. Measure baseline response times, compare true and false conditions, and repeat tests to establish a consistent timing difference. This helps eliminate false positives caused by server load, network congestion, or temporary latency.
+- **Injection context matters:** A database-specific delay function alone does not guarantee a working payload. The injection context (string, numeric, or other expression context), quote handling, comment syntax, and stacked-query support determine how the function must be integrated into the original SQL statement. For example, PostgreSQL supports both `pg_sleep()` and the `||` concatenation operator, but they serve different purposes.
 - **Engagement reality:** Time-based extraction is *slow* — character-by-character over a slow network can take hours for a single column. Use manual testing to confirm the vulnerability and understand its behavior. For authorized extraction, automation tools such as sqlmap can be used when permitted by the engagement scope.
 - **Operational risk:** Time-based payloads can degrade application performance for other users if run aggressively (many concurrent threads × multi-second sleeps). Throttle request concurrency during testing windows, especially on client-shared/production environments — note this explicitly in the engagement Rules of Engagement (RoE) and in the report.
 - **Report-writing tip:** For blind findings, always include the literal *time delta* observed as evidence. For example:
@@ -270,5 +320,3 @@ This is more convincing to a technical reviewer than simply stating "time-based 
 ## Next File
 
 → `04-oob-sqli.md` — Out-of-band SQLi via DNS/HTTP exfiltration channels.
-**PortSwigger lab mapping (Practitioner):** **"Blind SQL injection with conditional errors"**.
-
