@@ -169,14 +169,14 @@ Repeat the process with different character guesses and increment the position t
 - A generic HTTP 500 alone does not prove SQL injection. Confirm that the response difference is repeatable and controlled by the injected condition.
 - If both conditions produce identical responses, try another valid error-triggering expression or another SQLi technique.
 
-**PortSwigger lab mapping (Practitioner):** **"Blind SQL injection with conditional errors"**.
-
+  
 ## 4. Time-Based Blind SQLi
 
 ### 4.1 When To Use It
-Used when there's *no* observable difference at all between true/false conditions — identical
-page content, identical status code, identical length. The only remaining signal is response
-time, by deliberately injecting a conditional delay.
+
+Used when there's *no observable difference* between true/false conditions — identical page content, identical status code, identical response length. The only remaining signal is response time, by deliberately injecting a conditional delay.
+
+Unlike Boolean-Based Blind SQLi, where the signal is a content or behavior difference, Time-Based Blind SQLi uses execution time as the signal.
 
 ### 4.2 MySQL
 
@@ -186,22 +186,17 @@ time, by deliberately injecting a conditional delay.
 
 Breakdown:
 - `IF(condition, true_value, false_value)` — MySQL's inline conditional function.
-- `SLEEP(5)` — pauses query execution for 5 seconds; only executed when the condition (`1=1`)
-  is true. If the HTTP response takes ~5 seconds longer than baseline, the condition was true.
-- `0` — a trivial false-branch value (no delay), so a false condition returns near-instantly.
-- 5 seconds (not 1) is chosen deliberately to produce a clear, unambiguous signal distinct
-  from normal network jitter/latency noise.
+- `SLEEP(5)` — pauses query execution for 5 seconds; executed only when the condition (`1=1`) is true. If the HTTP response takes approximately 5 seconds longer than baseline, the condition was likely true.
+- `0` — a trivial false-branch value (no delay), so a false condition returns without the intentional delay.
+- 5 seconds is chosen to produce a clearer signal distinct from normal network jitter/latency noise. It is a practical starting point, not a universal requirement.
 
-Extracting data via time-based (same `SUBSTRING` logic as boolean-based, but the *signal* is
-delay instead of content difference):
+Extracting data via time-based (same `SUBSTRING` logic as Boolean-Based Blind SQLi, but the *signal* is delay instead of content difference):
 
 ```sql
 ' AND IF(SUBSTRING((SELECT password FROM users WHERE username='admin'),1,1)='a',SLEEP(5),0)--
 ```
 
-Breakdown: identical structure to the boolean-based character extraction in section 2.3, with
-the comparison result fed into `IF(...)` so a correct guess triggers a 5-second delay instead
-of a content change.
+Breakdown: Identical structure to the Boolean-Based character extraction in section 2.3, with the comparison result fed into `IF(...)` so a correct guess triggers a 5-second delay instead of a content change.
 
 ### 4.3 MSSQL
 
@@ -210,10 +205,12 @@ of a content change.
 ```
 
 Breakdown:
-- `;` — MSSQL supports stacked queries by default in many drivers, allowing a second
-  statement after the original query (see file 08 for full stacked-query coverage).
-- `IF (1=1) WAITFOR DELAY '0:0:5'` — MSSQL's conditional + delay syntax; `WAITFOR DELAY` takes
-  a `'HH:MM:SS'` time literal, here pausing 5 seconds if the condition holds.
+- `;` — terminates the original SQL statement and attempts to start a second statement. MSSQL supports stacked queries, but whether they are exploitable depends on the application's query execution method and database driver configuration.
+- `IF (1=1)` — MSSQL's conditional control-flow statement.
+- `WAITFOR DELAY '0:0:5'` — pauses execution for 5 seconds. The time format is `'HH:MM:SS'`.
+- If the condition is true, the delay executes; if false, the delay is skipped.
+
+**Important:** Do not assume stacked queries are always supported. The injection context and application/database driver behavior determine whether this technique works.
 
 ### 4.4 PostgreSQL
 
@@ -222,40 +219,56 @@ Breakdown:
 ```
 
 Breakdown:
-- `pg_sleep(seconds)` — PostgreSQL's native delay function, the equivalent of MySQL's
-  `SLEEP()`.
-- Wrapped in `CASE WHEN` (same conditional pattern as section 3) since `pg_sleep` itself takes
-  no condition argument — Postgres needs the conditional logic expressed separately.
+- `pg_sleep(seconds)` — PostgreSQL's native delay function, equivalent to MySQL's `SLEEP()`.
+- `CASE WHEN` — evaluates the condition and selects the appropriate branch.
+- `pg_sleep(5)` — introduces a 5-second delay when the condition is true.
+- `pg_sleep(0)` — introduces no intentional delay when the condition is false.
+- The `;` attempts to execute a second SQL statement, so stacked-query support is required for this particular injection structure.
 
 ### 4.5 Oracle
 
+Oracle supports several delay primitives. One alternative is `DBMS_PIPE.RECEIVE_MESSAGE()`, which can be used as a value-returning function inside a conditional SQL expression.
+
 ```sql
-' AND 1=(SELECT CASE WHEN (1=1) THEN dbms_lock.sleep(5) ELSE 1 END FROM dual)--
+' AND 1=CASE WHEN (1=1) THEN DBMS_PIPE.RECEIVE_MESSAGE('a',5) ELSE 0 END--
 ```
 
 Breakdown:
-- `dbms_lock.sleep(5)` — Oracle's native delay procedure (requires `EXECUTE` privilege on the
-  `DBMS_LOCK` package; if it errors with "insufficient privileges," try `dbms_pipe.receive_message` as a fallback delay primitive instead).
-- Same `CASE WHEN` + `FROM dual` pattern explained in files 01/02.
+- `CASE WHEN (1=1)` — evaluates the condition and selects the appropriate branch.
+- `DBMS_PIPE.RECEIVE_MESSAGE('a',5)` — waits for a message on pipe `'a'` for up to 5 seconds.
+- `5` — maximum waiting time in seconds.
+- `ELSE 0` — returns immediately without an intentional delay when the condition is false.
+- `1=` — compares the returned status code with `1`. A timeout typically returns `1`, making the condition true and allowing the SQL expression to evaluate successfully.
 
-PortSwigger lab mapping (Practitioner): **"Blind SQL injection with time delays"**, **"Blind
-SQL injection with time delays and information retrieval"**.
+**Expected behavior:**
+- True condition → approximately 5 seconds delay.
+- False condition → no intentional delay.
+
+**Important:** The `DBMS_PIPE` package must be accessible to the database user. The pipe must also have no incoming message during the test. Package privileges and the surrounding SQL injection context can affect whether this payload works.
+
+### 4.6 PortSwigger Lab Mapping (Practitioner)
+
+- **Blind SQL injection with time delays**
+- **Blind SQL injection with time delays and information retrieval**
 
 ## 5. Real-World Notes
 
-- **Common mistake:** Using a delay that's too short (e.g., `SLEEP(1)`) — easily lost in
-  normal network jitter, producing false negatives. 5 seconds is a reasonable default; raise
-  it on high-latency or rate-limited targets.
-- **Engagement reality:** Time-based extraction is *slow* — character-by-character over a slow
-  network can take hours for a single column. Always hand this off to sqlmap (file 07) for any
-  real extraction; manual time-based testing is for *confirming* the vector only.
-- **Operational risk:** Time-based payloads can degrade application performance for other
-  users if run aggressively (many concurrent threads × multi-second sleeps). Throttle request
-  concurrency during testing windows, especially on client-shared/production environments —
-  note this explicitly in the engagement rules of engagement (RoE) and in the report.
-- **Report-writing tip:** For blind findings, always include the literal *time delta* observed
-  (e.g., "baseline 240ms, payload response 5,240ms") as evidence — this is far more convincing
-  to a technical reviewer than just stating "time-based blind SQLi confirmed."
+- **Common mistake:** Using a delay that's too short (e.g., `SLEEP(1)`) — easily lost in normal network jitter, producing false negatives. 5 seconds is a reasonable starting point; adjust according to baseline latency and response variability.
+- **Statistical validation:** Never confirm a time-based SQLi from a single delayed response. Measure baseline response times, compare true and false conditions, and repeat tests to establish a consistent timing difference. This helps eliminate false positives caused by server load, network congestion, or temporary latency.
+- **Engagement reality:** Time-based extraction is *slow* — character-by-character over a slow network can take hours for a single column. Use manual testing to confirm the vulnerability and understand its behavior. For authorized extraction, automation tools such as sqlmap can be used when permitted by the engagement scope.
+- **Operational risk:** Time-based payloads can degrade application performance for other users if run aggressively (many concurrent threads × multi-second sleeps). Throttle request concurrency during testing windows, especially on client-shared/production environments — note this explicitly in the engagement Rules of Engagement (RoE) and in the report.
+- **Report-writing tip:** For blind findings, always include the literal *time delta* observed as evidence. For example:
+
+| Test | Response time |
+|---|---:|
+| Baseline request | 240 ms |
+| False condition | 250 ms |
+| True condition | 5,240 ms |
+
+This is more convincing to a technical reviewer than simply stating "time-based blind SQLi confirmed."
 
 ## Next File
+
 → `04-oob-sqli.md` — Out-of-band SQLi via DNS/HTTP exfiltration channels.
+**PortSwigger lab mapping (Practitioner):** **"Blind SQL injection with conditional errors"**.
+
