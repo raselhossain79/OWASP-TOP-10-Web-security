@@ -93,24 +93,83 @@ PortSwigger lab mapping (Practitioner): **"Blind SQL injection with conditional 
 
 ## 3. Boolean-Based — Conditional Errors Variant
 
-When there's no visible content difference but the app *does* throw a generic 500 on DB
-errors (without leaking error text), force an error only when the condition is true:
+### 3.1 When To Use It
+
+Used when the application does not show visible content differences between TRUE and FALSE conditions, but database errors cause a distinguishable generic HTTP 500 response.
+
+Instead of relying on page content, deliberately trigger a database error depending on whether a tested condition is TRUE or FALSE.
+
+### 3.2 Core Payload
 
 ```sql
-' AND (SELECT CASE WHEN (1=1) THEN (SELECT 1 FROM information_schema.tables) ELSE 1/0 END)--
+' AND (SELECT CASE
+    WHEN (1=1) THEN 1/0
+    ELSE 1
+END)--
 ```
 
-Breakdown:
-- `CASE WHEN condition THEN x ELSE y END` — standard SQL conditional expression.
-- `WHEN (1=1)` — the condition being tested (replace with your actual data-dependent test,
-  e.g., `(SELECT username FROM users LIMIT 1)='admin'`).
-- `THEN (SELECT 1 FROM information_schema.tables)` — a harmless, always-valid subquery
-  executed when the condition is true — the response renders normally.
-- `ELSE 1/0` — division by zero, which is a guaranteed, deliberate database error when the
-  condition is false — the app throws its generic error page, giving you a binary true/false
-  signal without ever seeing real error text or real data.
+**Breakdown:**
 
-PortSwigger lab mapping (Practitioner): **"Blind SQL injection with conditional errors"**.
+- `CASE WHEN condition THEN x ELSE y END` — evaluates a condition and returns the corresponding expression.
+- `WHEN (1=1)` — the condition being tested. Replace this with an actual data-dependent condition.
+- `THEN 1/0` — deliberately triggers a division-by-zero error when the condition is TRUE.
+- `ELSE 1` — returns a harmless value when the condition is FALSE.
+- `--` — comments out the remaining part of the original SQL statement.
+
+### 3.3 TRUE vs FALSE Testing
+
+**TRUE condition:**
+
+```sql
+' AND (SELECT CASE WHEN (1=1) THEN 1/0 ELSE 1 END)--
+```
+
+Expected behavior: Database error, potentially resulting in HTTP 500.
+
+**FALSE condition:**
+
+```sql
+' AND (SELECT CASE WHEN (1=2) THEN 1/0 ELSE 1 END)--
+```
+
+Expected behavior: No deliberate division-by-zero error.
+
+If the application consistently produces different responses for these two conditions, the error-based Boolean signal can be used to infer database information.
+
+### 3.4 Extracting Data Using Conditional Errors
+
+The same character-by-character extraction logic used in Boolean-based conditional responses can be applied here.
+
+**Example — Check whether the first character of a password is `a`:**
+
+```sql
+' AND (SELECT CASE
+    WHEN SUBSTRING((SELECT password FROM users WHERE username='admin'),1,1)='a'
+    THEN 1/0
+    ELSE 1
+END)--
+```
+
+**Breakdown:**
+
+- `SELECT password FROM users` — retrieves the password value.
+- `WHERE username='admin'` — selects the target user's record.
+- `SUBSTRING(...,1,1)` — extracts the first character.
+- `='a'` — checks whether the extracted character matches the guess.
+- `THEN 1/0` — triggers an error if the guess is correct.
+- `ELSE 1` — avoids the deliberate error if the guess is incorrect.
+
+Repeat the process with different character guesses and increment the position to reconstruct the value.
+
+### 3.5 Important Considerations
+
+- Conditional error payloads are DBMS-dependent. The exact error expression and syntax may need adjustment for the target database.
+- Division by zero is not guaranteed to behave identically across all database engines and query contexts.
+- Some databases or drivers may suppress, transform, or handle errors differently.
+- A generic HTTP 500 alone does not prove SQL injection. Confirm that the response difference is repeatable and controlled by the injected condition.
+- If both conditions produce identical responses, try another valid error-triggering expression or another SQLi technique.
+
+**PortSwigger lab mapping (Practitioner):** **"Blind SQL injection with conditional errors"**.
 
 ## 4. Time-Based Blind SQLi
 
