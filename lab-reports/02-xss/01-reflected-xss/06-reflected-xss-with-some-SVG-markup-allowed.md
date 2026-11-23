@@ -1,4 +1,4 @@
-# Reflected XSS — SVG Markup and Event Handler Filter Bypass   06-reflected-xss-with-some-SVG-markup-allowed
+# Reflected XSS — SVG Markup and Event Handler Filter Bypass   
 
 ## 1. Summary
 
